@@ -27,7 +27,7 @@ irisArrangeWithSepalW<-iris%>%arrange(Sepal.Width)
 
 #---------------------ejercicio7---------------------#
 irisSelect<-iris%>%select(Sepal.Length,Sepal.Width,Petal.Length)%>%arrange(Sepal.Length,Sepal.Width)
-#View
+#View(irisSelect)
 
 #---------------------ejercicio8---------------------#
 irismutate<-iris%>%mutate(proportion=Sepal.Length/Sepal.Width)
