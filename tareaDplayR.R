@@ -38,3 +38,5 @@ avg_slength<-iris%>%summarise(avg_slength=median(Sepal.Length))
 #View(avg_slength)
 
 #---------------------ejercicio10---------------------#
+groupbyIris<-iris%>%group_by(Sepal.Length >= 4.6)%>%summarise(avg_slength=median(Sepal.Length))
+View(groupbyIris)
