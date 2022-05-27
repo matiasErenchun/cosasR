@@ -20,7 +20,8 @@ ggplot(container, aes(x=carb,y=cantidad_de_vehiculos)) +
   geom_col( colour = "black")
 
 #ejercicio 3
-contenedor<-mtcars%>%group_by(cyl)%>%summarise(cantidad_de_vehiculos=sum(gear))
+contenedor<-mtcars%>%summarise(cyl=cyl,gear=gear)%>%group_by(cyl,gear)%>%summarise(total_vehiculos=sum(gear))%>%group_by(cyl)
 View(contenedor)
-ggplot(mtcars, aes(x=cyl)) +
-  geom_col( colour = "black")
+ggplot(contenedor, aes(x=cyl, y=total_vehiculos, fill=factor(gear))) +
+  geom_col( colour = "black") +
+  scale_fill_brewer(palette = "Pastel1")
