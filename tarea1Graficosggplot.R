@@ -4,6 +4,7 @@
 #Mazda RX4 Wag  21.0   6  160 110 3.90 2.875 17.02  0  1    4    4
 #Datsun 710     22.8   4  108  93 3.85 2.320 18.61  1  1    4    1
 #Hornet 4 Drive 21.4   6  258 110 3.08 3.215 19.44  1  0    3    1
+dim(mtcars)
 library(ggplot2)
 library(dplyr)
 library(RColorBrewer)
@@ -14,14 +15,14 @@ ggplot(mtcars, aes(factor(am), qsec)) +
 
 #ejercicio 2
 
-container<-mtcars%>%group_by(carb)%>%summarise(cantidad_de_vehiculos=sum(carb))
+container<-mtcars%>%count(carb)
 View(container)
-ggplot(container, aes(x=carb,y=cantidad_de_vehiculos)) +
+ggplot(container, aes(x=carb,y=n)) +
   geom_col( colour = "black")
 
 #ejercicio 3
-contenedor<-mtcars%>%summarise(cyl=cyl,gear=gear)%>%group_by(cyl,gear)%>%summarise(total_vehiculos=sum(gear))%>%group_by(cyl)
+contenedor<-mtcars%>%count(cyl, gear)
 View(contenedor)
-ggplot(contenedor, aes(x=cyl, y=total_vehiculos, fill=factor(gear))) +
+ggplot(contenedor, aes(x=cyl, y=n, fill=factor(gear))) +
   geom_col( colour = "black") +
   scale_fill_brewer(palette = "Pastel1")
