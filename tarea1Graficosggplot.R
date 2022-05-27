@@ -1,0 +1,26 @@
+#head(mtcars,4)
+#mpg cyl disp  hp drat    wt  qsec vs am gear carb
+#Mazda RX4      21.0   6  160 110 3.90 2.620 16.46  0  1    4    4
+#Mazda RX4 Wag  21.0   6  160 110 3.90 2.875 17.02  0  1    4    4
+#Datsun 710     22.8   4  108  93 3.85 2.320 18.61  1  1    4    1
+#Hornet 4 Drive 21.4   6  258 110 3.08 3.215 19.44  1  0    3    1
+library(ggplot2)
+library(dplyr)
+library(RColorBrewer)
+
+#Ejercicio 1
+ggplot(mtcars, aes(factor(am), qsec)) +
+  geom_boxplot()
+
+#ejercicio 2
+
+container<-mtcars%>%group_by(carb)%>%summarise(cantidad_de_vehiculos=sum(carb))
+View(container)
+ggplot(container, aes(x=carb,y=cantidad_de_vehiculos)) +
+  geom_col( colour = "black")
+
+#ejercicio 3
+contenedor<-mtcars%>%group_by(cyl)%>%summarise(cantidad_de_vehiculos=sum(gear))
+View(contenedor)
+ggplot(mtcars, aes(x=cyl)) +
+  geom_col( colour = "black")
