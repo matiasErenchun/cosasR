@@ -26,3 +26,8 @@ View(contenedor)
 ggplot(contenedor, aes(x=cyl, y=n, fill=factor(gear))) +
   geom_col( colour = "black") +
   scale_fill_brewer(palette = "Pastel1")
+
+#ejercicio 4
+
+ggplot(mtcars, aes(x = wt, y = mpg)) +
+  geom_point(alpha = 0.3, color = "blue")
