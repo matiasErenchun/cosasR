@@ -31,3 +31,26 @@ ggplot(contenedor, aes(x=cyl, y=n, fill=factor(gear))) +
 
 ggplot(mtcars, aes(x = wt, y = mpg)) +
   geom_point(alpha = 0.3, color = "blue")
+
+
+#ejercicio 5 propuestas
+#mas carburadores menor tiempo de qsec
+ggplot(mtcars, aes(x = carb, y = qsec)) +
+  geom_jitter(alpha = 0.4)
+
+ggplot(mtcars, aes(factor(carb), qsec)) +
+  geom_boxplot()
+
+#ejercicio 5
+#un idea rapida podria ser que mas HP representa mayor aceleracion
+#para comprobar esto se utilizo un grafico de linea en conjunto con un 
+#grafico de puntos para resaltar mas lo lugares de interes de la curva
+ggplot(mtcars, aes(hp, qsec)) +
+  geom_line()+
+  geom_point(size = 1.5)
+
+# de este grafico vemos que si bien a mayor hp en lo general si se consigue reducir el tiempo
+#que demora el vehiculo en recorrer 1/4 de milla, la funcion no es del todo lineal
+#teniendo saltos y caidas interesantes de analizar por separado 
+
+
