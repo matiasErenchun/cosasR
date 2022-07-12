@@ -9,6 +9,7 @@ library("factoextra")
 #install.packages('gsheet')
 
 library(gsheet)
+library(tidyverse)
 
 url<-"https://drive.google.com/file/d/1G-ggtM7IRk013dj2-afEzegNczK1tEyj/view"
 
@@ -31,6 +32,26 @@ summary(dataF)
 View(dataF)
 pcAmANITO<- PCA(dataF,  graph = FALSE)#aplicamos PCA
 View(pcAmANITO)
+get_eig(pcAmANITO)
+fviz_screeplot(pcAmANITO, addlabels = TRUE, ylim = c(0, 50))
+fviz_pca_var(pcAmANITO, col.var="contrib",
+             gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07"),
+             repel = TRUE # Avoid text overlapping
+)
+fviz_pca_ind(pcAmANITO, col.ind = "cos2", 
+             gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07"),
+             repel = TRUE # Avoid text overlapping (slow if many points)
+)
+summary(pcAmANITO)
+#para usar k-means https://stackoverflow.com/questions/61151538/compute-k-means-after-pca
+km<-kmeans(pcAmANITO$ind$coord, centers = 4, nstart = 14)
+#plot(pcAmANITO$ind$coord[,1:2],col=factor(km$cluster))
+km2<-kmeans(pcAmANITO$ind$coord, centers = 3, nstart = 14)
+#plot(pcAmANITO$ind$coord[,1:2],col=factor(km2$cluster))
+km2<-kmeans(pcAmANITO$ind$coord, centers = 5, nstart = 14)
+plot(pcAmANITO$ind$coord[,1:2],col=factor(km2$cluster))
+summary(km)
+fviz_nbclust(pcAmANITO$ind$coord, kmeans, method = "gap_stat")
 
 
 
