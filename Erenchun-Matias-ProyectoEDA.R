@@ -18,6 +18,9 @@ url<-"https://drive.google.com/file/d/1G-ggtM7IRk013dj2-afEzegNczK1tEyj/view"
 
 data<-gsheet2tbl(url)
 #View(data)
+
+#Preprocesar datos
+
 #------------------------------------------Preprocesar los datos para usar PCA----------------------------------------
 #los datos horiginales tienen doble cabecera ademas que son leidos como chr tenemso que,
 #corregir esto para poder usar PCA
@@ -33,76 +36,76 @@ dataF<-apply(dataF[,-1],2, as.integer)#pasamos los valores de chr a int en todas
 rownames(dataF)<-paises#agregamos los nombres de las filas
 summary(dataF)
 View(dataF)
+
+#---------------------------------------------------------------------
+
+#2 calculo de pca
+
 pcAmANITO<- PCA(dataF,  graph = FALSE)#aplicamos PCA
-get_eig(pcAmANITO)
 fviz_screeplot(pcAmANITO, addlabels = TRUE, ylim = c(0, 50))
-var <- get_pca_var(pcAmANITO)
-head(var$coord)
+get_eig(pcAmANITO)
+#aqui podemos ver que teniendo desde la dimencion 1 a la 6 ya tenemos ams del 85%
+#de la informacion, pudiendod escartar la sotras dimenciones
+
 fviz_pca_var(pcAmANITO, col.var="contrib",
              gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07"),
              repel = TRUE # Avoid text overlapping
 )
+
 fviz_pca_ind(pcAmANITO, col.ind = "cos2", 
              gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07"),
-             repel = TRUE # Avoid text overlapping (slow if many points)
+             repel = TRUE # mueve los elementos si estan superpuestos
 )
-summary(pcAmANITO)
+
+#---------------------------------------------------------------------
+
+#3 aplicamos kmeans con distintos valores
 #para usar k-means https://stackoverflow.com/questions/61151538/compute-k-means-after-pca
-km<-kmeans(var$coord, centers = 4, nstart = 14)
-plot(pcAmANITO$ind$coord[,1:2],col=factor(km$cluster))
+km <- kmeans(pcAmANITO$ind$coord, 4, nstart = 14)
+fviz_cluster(km, data = pcAmANITO$ind$coord,
+             palette = c("#00AFBB","#2E9FDF", "#E7B800", "#FC4E07"),
+             ggtheme = theme_minimal(),
+             main = "Partitioning Clustering Plot"
+)
 
 km2<-kmeans(pcAmANITO$ind$coord, centers = 3, nstart = 14)
-plot(pcAmANITO$ind$coord[,1:2],col=factor(km2$cluster))
-km2<-kmeans(pcAmANITO$ind$coord, centers = 5, nstart = 14)
-plot(pcAmANITO$ind$coord[,1:2],col=factor(km2$cluster))
-summary(km)
-fviz_nbclust(pcAmANITO$ind$coord, kmeans, method = "gap_stat")
-fviz_nbclust(var$coord, kmeans, method = "gap_stat")
+fviz_cluster(km2, data = pcAmANITO$ind$coord,
+             palette = c("#00AFBB","#2E9FDF", "#E7B800", "#FC4E07"),
+             ggtheme = theme_minimal(),
+             main = "Partitioning Clustering Plot"
+)
 
+km3<-kmeans(pcAmANITO$ind$coord, centers = 2, nstart = 14)
+fviz_cluster(km3, data = pcAmANITO$ind$coord,
+             palette = c("#00AFBB","#2E9FDF", "#E7B800", "#FC4E07"),
+             ggtheme = theme_minimal(),
+             main = "Partitioning Clustering Plot"
+)
+
+#-------------------------------------------------------------------
+
+#4 buscar el numero correcto de clusters
+#ahora buscamos en numero ideal de cluster, spoiler el metodo de la libreria no funciono.
+fviz_nbclust(pcAmANITO$ind$coord, kmeans, method = "gap_stat")
 fviz_nbclust(dataF, kmeans, method = "gap_stat")
 
-miCluster<-NbClust(dataF, diss=NULL, distance = "euclidean", min.nc=2, max.nc=10, method = "kmeans", index = "kl") 
-bClusters <- length(unique(miCluster$Best.partition))
-bClusters
-summary(bClusters)
+#buscando en internet encontre este metodo.
+miCluster<-NbClust(dataF, diss=NULL, distance = "euclidean", min.nc=2, max.nc=10, method = "kmeans", index = "kl")
+head(miCluster)
+bClusters <-miCluster$Best.nc
+head(bClusters)
+#obtenemos que el correcto de cluster es 4
 
+#-------------------------------------------------------------------
 
-fviz_nbclust(var$coord, kmeans, method = "gap_stat")
-
-
-#agrupamiento jerarquico 
-res.hc <- dataF%>%
-  scale() %>%
-  eclust("hclust", k = 3, graph = FALSE)
-
-fviz_dend(res.hc, palette = "jco",
-          rect = TRUE, show_labels = TRUE)
-fviz_silhouette(res.hc)
-
-#-----------------------------------------
+#5 agrupamiento jerarquico 
 res.hc <- dataF%>%
   scale() %>%
   eclust("hclust", k = 4, graph = FALSE)
 
 fviz_dend(res.hc, palette = "jco",
           rect = TRUE, show_labels = TRUE)
-fviz_silhouette(res.hc)
-#---------------------------------------
-res.hc <- dataF%>%
-  scale() %>%
-  eclust("hclust", k = 2, graph = FALSE)
+#-------------------------------------------------------------------
 
-fviz_dend(res.hc, palette = "jco",
-          rect = TRUE, show_labels = TRUE)
-fviz_silhouette(res.hc)
+#6 conclusiones
 
-
-km.res <- kmeans(pcAmANITO$ind$coord, 3, nstart = 14)
-
-# 3. Visualize
-library("factoextra")
-fviz_cluster(km.res, data = pcAmANITO$ind$coord,
-             palette = c("#00AFBB","#2E9FDF", "#E7B800", "#FC4E07"),
-             ggtheme = theme_minimal(),
-             main = "Partitioning Clustering Plot"
-)
