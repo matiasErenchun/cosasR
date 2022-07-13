@@ -31,9 +31,10 @@ rownames(dataF)<-paises#agregamos los nombres de las filas
 summary(dataF)
 View(dataF)
 pcAmANITO<- PCA(dataF,  graph = FALSE)#aplicamos PCA
-View(pcAmANITO)
 get_eig(pcAmANITO)
 fviz_screeplot(pcAmANITO, addlabels = TRUE, ylim = c(0, 50))
+var <- get_pca_var(pcAmANITO)
+head(var$coord)
 fviz_pca_var(pcAmANITO, col.var="contrib",
              gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07"),
              repel = TRUE # Avoid text overlapping
@@ -44,14 +45,44 @@ fviz_pca_ind(pcAmANITO, col.ind = "cos2",
 )
 summary(pcAmANITO)
 #para usar k-means https://stackoverflow.com/questions/61151538/compute-k-means-after-pca
-km<-kmeans(pcAmANITO$ind$coord, centers = 4, nstart = 14)
-#plot(pcAmANITO$ind$coord[,1:2],col=factor(km$cluster))
+km<-kmeans(var$coord, centers = 4, nstart = 14)
+plot(pcAmANITO$ind$coord[,1:2],col=factor(km$cluster))
 km2<-kmeans(pcAmANITO$ind$coord, centers = 3, nstart = 14)
 #plot(pcAmANITO$ind$coord[,1:2],col=factor(km2$cluster))
 km2<-kmeans(pcAmANITO$ind$coord, centers = 5, nstart = 14)
 plot(pcAmANITO$ind$coord[,1:2],col=factor(km2$cluster))
 summary(km)
 fviz_nbclust(pcAmANITO$ind$coord, kmeans, method = "gap_stat")
+fviz_nbclust(var$coord, kmeans, method = "gap_stat")
+
+fviz_nbclust(dataF, kmeans, method = "gap_stat")
+
+fviz_nbclust(var$coord, kmeans, method = "gap_stat")
 
 
+#agrupamiento jerarquico 
+res.hc <- dataF%>%
+  scale() %>%
+  eclust("hclust", k = 3, graph = FALSE)
+
+fviz_dend(res.hc, palette = "jco",
+          rect = TRUE, show_labels = TRUE)
+fviz_silhouette(res.hc)
+
+#-----------------------------------------
+res.hc <- dataF%>%
+  scale() %>%
+  eclust("hclust", k = 4, graph = FALSE)
+
+fviz_dend(res.hc, palette = "jco",
+          rect = TRUE, show_labels = TRUE)
+fviz_silhouette(res.hc)
+#---------------------------------------
+res.hc <- dataF%>%
+  scale() %>%
+  eclust("hclust", k = 2, graph = FALSE)
+
+fviz_dend(res.hc, palette = "jco",
+          rect = TRUE, show_labels = TRUE)
+fviz_silhouette(res.hc)
 
