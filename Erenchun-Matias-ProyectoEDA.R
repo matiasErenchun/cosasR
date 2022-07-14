@@ -9,6 +9,7 @@ library("factoextra")
 #install.packages('gsheet')
 
 library(gsheet)
+
 library(tidyverse)
 
 #install.packages("NbClust")
@@ -86,8 +87,8 @@ fviz_cluster(km3, data = pcAmANITO$ind$coord,
 
 #4 buscar el numero correcto de clusters
 #ahora buscamos en numero ideal de cluster, spoiler el metodo de la libreria no funciono.
-fviz_nbclust(pcAmANITO$ind$coord, kmeans, method = "gap_stat")
-fviz_nbclust(dataF, kmeans, method = "gap_stat")
+#fviz_nbclust(pcAmANITO$ind$coord, kmeans, method = "gap_stat")
+#fviz_nbclust(dataF, kmeans, method = "gap_stat")
 
 #buscando en internet encontre este metodo.
 miCluster<-NbClust(dataF, diss=NULL, distance = "euclidean", min.nc=2, max.nc=10, method = "kmeans", index = "kl")
@@ -108,4 +109,15 @@ fviz_dend(res.hc, palette = "jco",
 #-------------------------------------------------------------------
 
 #6 conclusiones
-
+#
+#como ya se menciono anterior mente al aplicar PCA se podrian descartar las dimenciones superiores a la 6,
+#ya que desde la dimension 1 a la 6 se tiene  mas de 85% de la informacion.
+#
+#como podemos ver en los graficos inicales de individual pca y Partitioning Clustering plot
+#singapur se separa bastante del resto de los elementos, lo cual se ve reflejado de igual forma
+#en el dendrogram, por otra parte es interesante como brasil en un inicio tenia 
+#medidas que lo asemejaban a paises mas restrictivos como china  o corea del sur,
+#los cuales son bastante mas estrictos en el control d ela pandemia.
+#
+#De otra manera podemso ver como italia se agrupa con paises como japon o rusia,
+#los cuales evolucionaron de mejora manera durnate la pandemia.
